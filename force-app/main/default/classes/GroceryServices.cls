@@ -13,13 +13,11 @@ public class GroceryServices {
     }
 
     public static Double calculateTotalAmount(List<Line_Item__c> lineItemsList) {
-
-        Double totalAmount;
+        Double totalAmount = 0;
 
         for (Line_Item__c lineItem:lineItemsList) {
             totalAmount += lineItem.Amount__c;
         }
-
         return totalAmount;
     }
 }
