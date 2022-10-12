@@ -16,7 +16,7 @@ public class GroceryDAO {
 
     public static Map<Id, Double> getTotalAmountOfTransactions(Set<Id> transactionIds) {
         List<AggregateResult> aggResults = [
-            SELECT Transaction__r.Id trId, SUM(Amount__c) totalAmount
+            SELECT Transaction__r.Id, SUM(Amount__c) totalAmount
             FROM Line_Item__c
             WHERE Transaction__r.Id IN :transactionIds
             GROUP BY Transaction__r.Id
@@ -24,27 +24,33 @@ public class GroceryDAO {
 
         Map<ID, Double> totalAmountOfTransactions = new Map<ID, Double>();
         for (AggregateResult aggResItem : aggResults) {
-            totalAmountOfTransactions.put((Id)aggResItem.get('trId'), (Double)aggResItem.get('totalAmount'));
+            totalAmountOfTransactions.put((Id)aggResItem.get('Id'), (Double)aggResItem.get('totalAmount'));
         }
 
         return totalAmountOfTransactions;  
     }
 
     public static List<Product__c> getTopSellers(Integer limitNumber, Integer offsetNumber, Integer year) {
-        List<Line_Item__c> lineItems = [
-            SELECT Product__c
+        List<AggregateResult> aggResults = [
+            SELECT Product__c, SUM(Quantity__c) totalQuantity
             FROM Line_Item__c
             WHERE CALENDAR_YEAR(CreatedDate) = :year
-            ORDER BY Quantity__c DESC
+            GROUP BY Product__c
+            ORDER BY SUM(Quantity__c) DESC
             LIMIT :limitNumber
             OFFSET :offsetNumber
         ];
 
-        Map<Id, Product__c> products = new Map<Id, Product__c>([SELECT Id, Name FROM Product__c]);
+        List<Id> productIds = new List<Id>();
+        for (AggregateResult aggRes : aggResults) {
+            productIds.add((Id)aggRes.get('Product__c'));
+        }
+
+        Map<Id, Product__c> products = new Map<Id, Product__c>([SELECT Id, Name FROM Product__c WHERE Id IN :productIds]);
 
         List<Product__c> topSellers = new List<Product__c>();
-        for (Line_Item__c lineItem : lineItems) {
-            topSellers.add(products.get(lineItem.Product__c));
+        for (AggregateResult aggRes : aggResults) {
+            topSellers.add(products.get((Id)aggRes.get('Product__c')));
         }
 
         return topSellers;
