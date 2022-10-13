@@ -3,7 +3,7 @@ public class GroceryDAO {
         List<Line_Item__c> lineItems = [
             SELECT Product__r.Id, Quantity__c
             FROM Line_Item__c
-            WHERE (DAY_ONLY(Transaction__r.CreatedDate) >= :startDate) AND (DAY_ONLY(Transaction__r.CreatedDate) <= :endDate)
+            WHERE (Transaction__r.CreatedDate >= :startDate) AND (Transaction__r.CreatedDate <= :endDate)
         ];
 
         Map<ID, Double> numberOfSoldProducts = new Map<ID, Double>();
@@ -16,21 +16,28 @@ public class GroceryDAO {
 
     public static Map<Id, Double> getTotalAmountOfTransactions(Set<Id> transactionIds) {
         List<AggregateResult> aggResults = [
-            SELECT Transaction__r.Id, SUM(Amount__c) totalAmount
+            SELECT Transaction__c, SUM(Amount__c) totalAmount
             FROM Line_Item__c
             WHERE Transaction__r.Id IN :transactionIds
-            GROUP BY Transaction__r.Id
+            GROUP BY Transaction__c
         ];
 
         Map<ID, Double> totalAmountOfTransactions = new Map<ID, Double>();
         for (AggregateResult aggResItem : aggResults) {
-            totalAmountOfTransactions.put((Id)aggResItem.get('Id'), (Double)aggResItem.get('totalAmount'));
+            totalAmountOfTransactions.put((Id)aggResItem.get('Transaction__c'), (Double)aggResItem.get('totalAmount'));
         }
 
         return totalAmountOfTransactions;  
     }
 
     public static List<Product__c> getTopSellers(Integer limitNumber, Integer offsetNumber, Integer year) {
+        /*
+        if ((limitNumber == null) || (offsetNumber == null) || (year == null)) {
+            System.debug('None of the input parameters can be null !');
+            return null;
+        }
+        */
+
         List<AggregateResult> aggResults = [
             SELECT Product__c, SUM(Quantity__c) totalQuantity
             FROM Line_Item__c
