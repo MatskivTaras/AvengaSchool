@@ -1,7 +1,8 @@
 public class GroceryServices {
     public static Database.SaveResult createTransaction(String paymentType) {
-        Transaction__c newTransaction = new Transaction__c();
-        newTransaction.Payment_Type__c = paymentType;
+        Transaction__c newTransaction = new Transaction__c(
+            Payment_Type__c = paymentType
+        );
         
         Database.SaveResult sr = Database.insert(newTransaction);
 
@@ -9,8 +10,9 @@ public class GroceryServices {
     }
 
     public static Database.SaveResult createTransaction(String paymentType, List<LineItemDTO> lineItemDTOs) {
-        Transaction__c newTransaction = new Transaction__c();
-        newTransaction.Payment_Type__c = paymentType;
+        Transaction__c newTransaction = new Transaction__c(
+            Payment_Type__c = paymentType
+        );
         
         Database.SaveResult sr = Database.insert(newTransaction);
         if (!sr.isSuccess()) {
@@ -19,9 +21,12 @@ public class GroceryServices {
 
         List<Line_Item__c> newLineItems = new List<Line_Item__c>();  
         for (LineItemDTO dtoItem : lineItemDTOs) {
-            Line_Item__c newLineItem = new Line_Item__c();
-            newLineItem.Transaction__c = newTransaction.Id;
-            newLineItem.Name = dtoItem.name;
+            Line_Item__c newLineItem = new Line_Item__c(
+                Transaction__c = newTransaction.Id,
+                Name = dtoItem.name,
+                Product__c = dtoItem.productId,
+                Quantity__c = dtoItem.quantity
+            );
 
             newLineItems.add(newLineItem);
         }
@@ -35,11 +40,12 @@ public class GroceryServices {
         return sr;
     }
 
-    public static Database.SaveResult createLineItem(Id transactionId, Id productId, Double amount) {
-        Line_Item__c newLineItem = new Line_Item__c();
-        newLineItem.Transaction__c = transactionId;
-        newLineItem.Product__c = productId;
-        newLineItem.Amount__c = amount;
+    public static Database.SaveResult createLineItem(Id transactionId, Id productId, Double quantity) {
+        Line_Item__c newLineItem = new Line_Item__c(
+            Transaction__c = transactionId,
+            Product__c = productId,
+            Quantity__c = quantity
+        );
 
         Database.SaveResult sr = Database.insert(newLineItem);
 
