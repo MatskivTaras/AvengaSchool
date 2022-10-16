@@ -33,8 +33,14 @@ public class GroceryServices {
 
         try {
             insert(newLineItems);
-        } catch (DMLException e) {
-            System.debug('Can not insert Line Items for transaction' + newTransaction.Id + '.\n' + e.getMessage());    
+        } catch (DMLException insException) {
+            System.debug('Can not insert Line Items for transaction' + sr.getId() + '.\n' + insException.getMessage());
+
+            try {
+                delete(newTransaction); 
+            } catch (DMLException delException) {
+                System.debug('Can not delete transaction' + sr.getId() + '.\n' + delException.getMessage());   
+            }
         }
 
         return sr;
