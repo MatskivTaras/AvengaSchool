@@ -1,6 +1,7 @@
 public class GroceryServices {
     public static Database.SaveResult createTransaction(String paymentType) {
         Transaction__c newTransaction = new Transaction__c(
+            Name = generateTransactionName(),
             Payment_Type__c = paymentType
         );
         
@@ -11,6 +12,7 @@ public class GroceryServices {
 
     public static Database.SaveResult createTransaction(String paymentType, List<LineItemDTO> lineItemDTOs) {
         Transaction__c newTransaction = new Transaction__c(
+            Name = generateTransactionName(),
             Payment_Type__c = paymentType
         );
         
@@ -100,5 +102,17 @@ public class GroceryServices {
         }
 
         return totalAmount;
+    }
+
+    public static String generateTransactionName() {
+        DateTime createdDate = DateTime.now();
+        return 
+            String.valueOf(createdDate.year()) +
+            String.valueOf(createdDate.month()) +
+            String.valueOf(createdDate.day()) +
+            String.valueOf(createdDate.hour()) +
+            String.valueOf(createdDate.minute()) +
+            String.valueOf(createdDate.second()) +
+            String.valueOf(createdDate.millisecond());
     }
 }
