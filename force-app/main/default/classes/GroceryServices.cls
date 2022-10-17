@@ -61,23 +61,25 @@ public class GroceryServices {
     }
 
     public static void cancelTransaction(Id transactionId) {
-        Transaction__c targetTransaction = [SELECT Name FROM Transaction__c WHERE Id = :transactionId];
-        targetTransaction.Status__c = 'Cancelled';
+        Transaction__c transactionForUpdate = new Transaction__c(
+            Id = transactionId,
+            Status__c = 'Cancelled'
+        );
 
         try {
-            update(targetTransaction);            
+            update(transactionForUpdate);            
         } catch (DmlException e) {
-            System.debug('Can not canseled transaction' + targetTransaction.Name + '.\n' + e.getMessage());            
+            System.debug('Can not canseled transaction' + transactionForUpdate.Name + '.\n' + e.getMessage());            
         }        
     }
 
     public static void deleteLineItem(Id lineItemId) {
-        Line_Item__c targetLineItem = [SELECT Name FROM Line_Item__c WHERE Id = :lineItemId];
+        Line_Item__c lineItemForDelete = new Line_Item__c(Id = lineItemId);
 
         try {
-            delete(targetLineItem);            
+            delete(lineItemForDelete);            
         } catch (DmlException e) {
-            System.debug('Can not delete line item' + targetLineItem.Name + '.\n' + e.getMessage());            
+            System.debug('Can not delete line item' + lineItemId + '.\n' + e.getMessage());            
         }                 
     }
 
