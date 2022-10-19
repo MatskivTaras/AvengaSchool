@@ -1,7 +1,6 @@
 public class GroceryServices {
     public static Database.SaveResult createTransaction(String paymentType) {
         Transaction__c newTransaction = new Transaction__c(
-            Name = generateTransactionName(),
             Payment_Type__c = paymentType
         );
         
@@ -12,7 +11,6 @@ public class GroceryServices {
 
     public static Database.SaveResult createTransaction(String paymentType, List<LineItemDTO> lineItemDTOs) {
         Transaction__c newTransaction = new Transaction__c(
-            Name = generateTransactionName(),
             Payment_Type__c = paymentType
         );
         
@@ -21,7 +19,7 @@ public class GroceryServices {
             return sr;
         }
 
-        List<Line_Item__c> newLineItems = new List<Line_Item__c>();  
+        List<Line_Item__c> newLineItems = new List<Line_Item__c>();
         for (LineItemDTO dtoItem : lineItemDTOs) {
             Line_Item__c newLineItem = new Line_Item__c(
                 Transaction__c = newTransaction.Id,
@@ -38,11 +36,7 @@ public class GroceryServices {
         } catch (DMLException insException) {
             System.debug('Can not insert Line Items for transaction' + sr.getId() + '.\n' + insException.getMessage());
 
-            try {
-                delete(newTransaction); 
-            } catch (DMLException delException) {
-                System.debug('Can not delete transaction' + sr.getId() + '.\n' + delException.getMessage());   
-            }
+            cancelTransaction(sr.getId());
         }
 
         return sr;
@@ -67,9 +61,9 @@ public class GroceryServices {
         );
 
         try {
-            update(transactionForUpdate);            
+            update(transactionForUpdate);
         } catch (DmlException e) {
-            System.debug('Can not canseled transaction' + transactionForUpdate.Name + '.\n' + e.getMessage());            
+            System.debug('Can not canseled transaction' + transactionId + '.\n' + e.getMessage());
         }        
     }
 
@@ -77,10 +71,10 @@ public class GroceryServices {
         Line_Item__c lineItemForDelete = new Line_Item__c(Id = lineItemId);
 
         try {
-            delete(lineItemForDelete);            
+            delete(lineItemForDelete);
         } catch (DmlException e) {
-            System.debug('Can not delete line item' + lineItemId + '.\n' + e.getMessage());            
-        }                 
+            System.debug('Can not delete line item' + lineItemId + '.\n' + e.getMessage());
+        }
     }
 
     public static List<Transaction__c> filterValidTransactions(List<Transaction__c> transactionsList) {
@@ -104,17 +98,5 @@ public class GroceryServices {
         }
 
         return totalAmount;
-    }
-
-    public static String generateTransactionName() {
-        DateTime createdDate = DateTime.now();
-        return 
-            String.valueOf(createdDate.year()) +
-            String.valueOf(createdDate.month()) +
-            String.valueOf(createdDate.day()) +
-            String.valueOf(createdDate.hour()) +
-            String.valueOf(createdDate.minute()) +
-            String.valueOf(createdDate.second()) +
-            String.valueOf(createdDate.millisecond());
     }
 }
