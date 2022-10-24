@@ -31,12 +31,7 @@ public class GroceryDAO {
     }
 
     public static List<Product__c> getTopSellers(Integer limitNumber, Integer offsetNumber, Integer year) {
-        /*
-        if ((limitNumber == null) || (offsetNumber == null) || (year == null)) {
-            System.debug('None of the input parameters can be null !');
-            return null;
-        }
-        */
+        List<Product__c> topSellers = new List<Product__c>();
 
         List<AggregateResult> aggResults = [
             SELECT Product__c, SUM(Quantity__c) totalQuantity
@@ -55,7 +50,6 @@ public class GroceryDAO {
 
         Map<Id, Product__c> products = new Map<Id, Product__c>([SELECT Id, Name FROM Product__c WHERE Id IN :productIds]);
 
-        List<Product__c> topSellers = new List<Product__c>();
         for (AggregateResult aggRes : aggResults) {
             topSellers.add(products.get((Id)aggRes.get('Product__c')));
         }

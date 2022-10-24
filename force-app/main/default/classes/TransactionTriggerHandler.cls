@@ -15,27 +15,28 @@ public class TransactionTriggerHandler {
             }
         }
 
-        if (!cancelledTransactionIds.isEmpty()) {
-
-            List<AggregateResult> aggResults = [
-                SELECT Product__c, MAX(Product__r.Available_Amount__c) availableAmount, SUM(Quantity__c) totalQuantity
-                FROM Line_Item__c
-                WHERE Transaction__c IN :cancelledTransactionIds
-                GROUP BY Product__c
-            ];
-
-            List<Product__c> productsForUpdate = new List<Product__c>();
-            for (AggregateResult aggRes : aggResults) {
-                Product__c product = new Product__c(
-                    Id = (Id)aggRes.get('Product__c'),
-                    Available_Amount__c = (Double)aggRes.get('availableAmount') + (Double)aggRes.get('totalQuantity')
-                );
-
-                productsForUpdate.add(product);
-            }
-    
-            update(productsForUpdate);   
+        if (cancelledTransactionIds.isEmpty()) {
+            return;
         }
+
+        List<AggregateResult> aggResults = [
+            SELECT Product__c, MAX(Product__r.Available_Amount__c) availableAmount, SUM(Quantity__c) totalQuantity
+            FROM Line_Item__c
+            WHERE Transaction__c IN :cancelledTransactionIds
+            GROUP BY Product__c
+        ];
+
+        List<Product__c> productsForUpdate = new List<Product__c>();
+        for (AggregateResult aggRes : aggResults) {
+            Product__c product = new Product__c(
+                Id = (Id)aggRes.get('Product__c'),
+                Available_Amount__c = (Double)aggRes.get('availableAmount') + (Double)aggRes.get('totalQuantity')
+            );
+
+            productsForUpdate.add(product);
+        }
+
+        update(productsForUpdate);
     }
 
     private static String generateName() {
