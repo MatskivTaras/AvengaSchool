@@ -59,13 +59,8 @@ public class LineItemTriggerHandler {
                 newQuantity = 0;
             }
 
-            System.debug('old quantity : ' + oldQuantity);
-            System.debug('new quantity : ' + newQuantity);
-
             if (oldQuantity != newQuantity) {
                 Double newAvailableAmount = productAvailableAmounts.get(lineItem.Product__c).Available_Amount__c + oldQuantity - newQuantity;
-
-                System.debug('new AA : ' + newAvailableAmount);
 
                 Product__c product = new Product__c(
                     Id = lineItem.Product__c,
@@ -77,7 +72,6 @@ public class LineItemTriggerHandler {
 
         if (!productsForUpdate.isEmpty()) {
             update(productsForUpdate);
-            System.debug('Updated products : ' + productsForUpdate);
         }
     }
 }
