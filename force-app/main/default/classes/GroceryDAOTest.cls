@@ -79,6 +79,24 @@ public class GroceryDAOTest {
     }
 
     @isTest
+    static void getTopSellersWithouOffsetTest(){
+        Integer limitNumber = 5;
+        Integer offsetNumber;
+        Integer year = 2022;
+        Boolean exceptionOccurred = false;
+
+        Test.startTest();
+        try {                        
+            List<Product__c> topSellers = GroceryDAO.getTopSellers(limitNumber, offsetNumber, year);
+        } catch (Exception e) {
+            exceptionOccurred = true;
+        }        
+        Test.stopTest();
+
+        System.assert(exceptionOccurred, 'GroceryDAO.getTopSellers : Error with null offset');
+    }
+
+    @isTest
     static void getPaymentStatisticsAmountTest(){
         Test.startTest();
         List<AggregateResult> paymentStatisticsAmount = GroceryDAO.getPaymentStatisticsAmount();
