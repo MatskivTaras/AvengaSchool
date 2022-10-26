@@ -1,4 +1,4 @@
-public with sharing class MostProfitableTransactionsController {
+public class MostProfitableTransactionsController {
     @AuraEnabled
     public static List<Transaction__c> getMostProfitableTransactions(Integer limitNumber){
         return [

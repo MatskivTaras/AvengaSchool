@@ -1,0 +1,17 @@
+<template>
+    <div style="height: 300px;">
+        <template if:true={error}>
+            <p>{error}</p>
+        </template>
+
+        <lightning-datatable
+            record-id={recordId}
+            key-field="id"
+            data={lineItems}
+            columns={columns}
+            show-row-number-column
+            row-number-offset={rowOffset}
+            hide-checkbox-column>
+        </lightning-datatable>
+    </div>
+</template>
