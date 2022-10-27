@@ -26,19 +26,19 @@ public class LineItemTriggerTest {
     static void testInsertLineItem(){
         Transaction__c targetTransaction = [SELECT Id FROM Transaction__c];
         Product__c targetProduct = [SELECT Id, Available_Amount__c FROM Product__c WHERE Name = 'product1'];
-        
-        Test.startTest();
         Line_Item__c newLineItem = new Line_Item__c(
             Name = 'new line item',
             Transaction__c = targetTransaction.Id,
             Product__c = targetProduct.Id,
             Quantity__c = 14
         );
+        
+        Test.startTest();
         Database.SaveResult sr = Database.insert(newLineItem);
+        Test.stopTest();
 
         targetProduct = [SELECT Id, Available_Amount__c FROM Product__c WHERE Name = 'product1'];
         Double newAvailableAmount = targetProduct.Available_Amount__c;
-        Test.stopTest();
 
         System.assert(sr.isSuccess(), 'LineItemTrigger : line item created');
         System.assert(newAvailableAmount == 1, 'LineItemTrigger.Insert : the product has been removed from the store');
@@ -46,13 +46,14 @@ public class LineItemTriggerTest {
 
     @isTest
     static void testUpdateLineItem(){
-        Test.startTest();
         Line_Item__c lineItemForUpdate = [SELECT Id, Quantity__c FROM Line_Item__c];
         lineItemForUpdate.Quantity__c = 14;
 
+        Test.startTest();
         Database.SaveResult sr = Database.update(lineItemForUpdate);
-        Product__c targetProduct = [SELECT Id, Available_Amount__c FROM Product__c WHERE Name = 'product1'];
         Test.stopTest();
+
+        Product__c targetProduct = [SELECT Id, Available_Amount__c FROM Product__c WHERE Name = 'product1'];
 
         System.assert(sr.isSuccess(), 'LineItemTrigger : line item updated');
         System.assert(targetProduct.Available_Amount__c == 11, 'LineItemTrigger.Update : the product has been updated in the store');
