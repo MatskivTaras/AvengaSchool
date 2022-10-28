@@ -36,17 +36,18 @@ public class IncreaseProductAvailableAmoutBatchTest {
     static void executeBatchTest() {
         Product__c beforeBatchProduct = [SELECT Available_Amount__c FROM Product__c WHERE Name = 'product1'];
         IncreaseProductAvailableAmoutBatch incProductAvailableAmoutBatch = new IncreaseProductAvailableAmoutBatch();
+        String cronString = '0 6 * * * ?';
 
         Test.startTest();
-        Id batchId = Database.executeBatch(incProductAvailableAmoutBatch);
+        String jobId = System.schedule('jobName', cronString, incProductAvailableAmoutBatch);
+        incProductAvailableAmoutBatch.execute(null);
         Test.stopTest();
-
-        AsyncApexJob job = [SELECT Id, Status, JobItemsProcessed, TotalJobItems, NumberOfErrors FROM AsyncApexJob WHERE ID = :batchId];
+        
         Product__c afterBatchProduct = [SELECT Available_Amount__c FROM Product__c WHERE Name = 'product1'];
-
+        
         System.assert(
             afterBatchProduct.Available_Amount__c == beforeBatchProduct.Available_Amount__c + 10,
             'IncreaseProductAvailableAmoutBatch.execute : product available amount increase on ten'
-        );        
+        );
     }
 }
