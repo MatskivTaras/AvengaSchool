@@ -99,4 +99,28 @@ public class GroceryServices {
 
         return totalAmount;
     }
+
+    public static void updateProductsWitchIncreased(List<Product__c> products) {
+        Boolean hasChanges = false;
+
+        for (Product__c product : products) {
+            Double totalQuantity = 0;
+
+            for (Line_Item__c lineItem : product.Line_Items__r) {
+                totalQuantity += lineItem.Quantity__c;
+            }
+
+            if (totalQuantity > 100) {
+                product.Available_Amount__c += 10;
+
+                if (!hasChanges) {
+                    hasChanges = true;
+                }
+            }
+        }
+
+        if (hasChanges) {
+            update products;
+        }
+    }
 }
