@@ -1,4 +1,4 @@
-import {LightningElement, track, wire} from 'lwc';
+import {LightningElement, track} from 'lwc';
 import getLineItemWrappers from '@salesforce/apex/LineItemsResponseController.getLineItemWrappers';
 import getResponseResult from '@salesforce/apex/LineItemsResponseController.getResponseResult';
 
@@ -16,27 +16,35 @@ export default class LineItems extends LightningElement {
     @track error;
     @track lineItemWrappers = [];
 
-    @track showBtnName = 'Show JSON';
+    @track showTable = false;
     @track showJSONParagraph = false;
+
+    @track btnLoad = 'Load';
+    @track btnShowJSON = 'Show JSON';
+
     @track jsonString;
     
     handleLoadClick() {
         this.getJSONResponse();
+
+        this.btnLoad = 'Loaded';
+        this.showTable = false;
     }
 
     handleDisplayClick() {
-        console.log('JSON string = ' + this.jsonString);
         this.fillDatatable(this.jsonString);
-        console.log('displayed');
+
+        this.btnLoad = 'Load';
+        this.showTable = true;
     }
 
     handleShowClick() {
         if (this.showJSONParagraph === true) {
             this.showJSONParagraph = false;
-            this.showBtnName = 'Show JSON';
+            this.btnShowJSON = 'Show JSON';
         } else {
             this.showJSONParagraph = true;
-            this.showBtnName = 'Hide JSON';
+            this.btnShowJSON = 'Hide JSON';
         }
     }
 
