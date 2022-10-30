@@ -1,0 +1,45 @@
+<template>
+    <div style="height: 200px;">
+        <h2 class="slds-text-heading_small slds-m-bottom_small" style="color: white">
+            Click Load button to see response result from
+            <span> avenga-school.herokuapp.com/retrieve-data </span>
+        </h2>
+
+        <template if:true={error}>            
+            <lightning-card class="slds-text-color_error">
+                <h2>Handle error</h2>
+                {error}
+            </lightning-card>
+        </template>
+
+        <lightning-datatable
+            key-field="Id"
+            data={lineItemWrappers}
+            columns={columns}
+            show-row-number-column
+            row-number-offset={rowOffset}
+            hide-checkbox-column>
+        </lightning-datatable>
+
+        <div class="slds-m-around--medium">
+            <lightning-button
+                    class="slds-m-left_medium"
+                    variant="brand"
+                    label="Load"
+                    onclick={handleLoadClick}>
+            </lightning-button>
+
+            <lightning-button
+                    class="slds-m-left_medium"
+                    variant="brand-outline"
+                    label="Show JSON"
+                    onclick={handleShowClick}>
+            </lightning-button>
+        </div>
+    </div>
+    <template if:true={showJSONParagraph}>
+        <div style="height: 700px; padding: 100px 0 0 20px">
+            <p>{jsonString}</p>
+        </div>
+    </template>
+</template>
