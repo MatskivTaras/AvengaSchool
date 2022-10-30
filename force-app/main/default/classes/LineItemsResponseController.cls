@@ -1,22 +1,11 @@
 public class LineItemsResponseController {
-    @AuraEnabled public static String jsonString{get; set;}
-
     @AuraEnabled
-    public static List<LineItemWrapper> getLineItemWrappers() {
+    public static List<LineItemWrapper> getLineItemWrappers(String responseResult) {
         List<LineItemWrapper> lineItemWrappers = new List<lineItemWrapper>();
-        HttpResponse httpResponse = LineItemsCallout.getCallout();
-
-        if (httpResponse.getStatusCode() != 200) {
-            jsonString = httpResponse.getStatus();
-            return lineItemWrappers;
-        }
-
         lineItemWrappers = (List<lineItemWrapper>)JSON.deserialize(
-            httpResponse.getBody(),
+            responseResult,
             List<lineItemWrapper>.class
         );
-
-        jsonString = httpResponse.getBody();
 
         Integer key = 50000001;
         for (lineItemWrapper wrappers : lineItemWrappers) {
@@ -29,6 +18,15 @@ public class LineItemsResponseController {
 
     @AuraEnabled
     public static String getResponseResult(){
-        return jsonString;
+        HttpResponse httpResponse = LineItemsCallout.getCallout();
+
+        String tmpResponseResult = '';
+        if (httpResponse.getStatusCode() == 200) {
+            tmpResponseResult = httpResponse.getBody();
+        } else {
+            tmpResponseResult = httpResponse.getStatus();
+        }
+
+        return tmpResponseResult;
     }
 }

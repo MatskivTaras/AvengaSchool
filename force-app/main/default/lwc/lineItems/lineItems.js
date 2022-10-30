@@ -14,21 +14,41 @@ export default class LineItems extends LightningElement {
     columns = columns;
     rowOffset = 0;
     @track error;
-    lineItemWrappers = [];
+    @track lineItemWrappers = [];
 
-    showJSONParagraph = false;
-    jsonString;
+    @track showBtnName = 'Show JSON';
+    @track showJSONParagraph = false;
+    @track jsonString;
     
     handleLoadClick() {
-        this.fillData();
+        this.getJSONResponse();
+    }
+
+    handleDisplayClick() {
+        console.log('JSON string = ' + this.jsonString);
+        this.fillDatatable(this.jsonString);
+        console.log('displayed');
     }
 
     handleShowClick() {
-        this.showJSONParagraph = true;
+        if (this.showJSONParagraph === true) {
+            this.showJSONParagraph = false;
+            this.showBtnName = 'Show JSON';
+        } else {
+            this.showJSONParagraph = true;
+            this.showBtnName = 'Hide JSON';
+        }
     }
 
-    fillData() {
-        getLineItemWrappers().then(
+    getJSONResponse() {
+        getResponseResult().then(
+            result => {
+                this.jsonString = result;
+            });
+    }
+
+    fillDatatable(tmpResponseResult) {
+        getLineItemWrappers({responseResult: tmpResponseResult}).then(
             result => {
                 let dataList = [];
                 result.forEach(element => {
@@ -47,12 +67,6 @@ export default class LineItems extends LightningElement {
             error => {
                 this.lineItemWrappers = undefined;
                 this.error = error;
-            });
-
-        getResponseResult().then(
-            result => {
-                console.log(result);
-                this.jsonString = result;
             });
     }
 }

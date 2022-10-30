@@ -1,8 +1,8 @@
 <template>
     <div style="height: 200px;">
         <h2 class="slds-text-heading_small slds-m-bottom_small" style="color: white">
-            Click Load button to see response result from
-            <span> avenga-school.herokuapp.com/retrieve-data </span>
+            See response result from
+            <span style="font-weight: bold"> avenga-school.herokuapp.com/retrieve-data </span>
         </h2>
 
         <template if:true={error}>            
@@ -26,20 +26,31 @@
                     class="slds-m-left_medium"
                     variant="brand"
                     label="Load"
-                    onclick={handleLoadClick}>
+                    onclick={handleLoadClick}
+                    style="width: 150px">
+            </lightning-button>
+
+            <lightning-button
+                    class="slds-m-left_medium"
+                    variant="brand"
+                    label="Display"
+                    onclick={handleDisplayClick}
+                    style="width: 150px">
             </lightning-button>
 
             <lightning-button
                     class="slds-m-left_medium"
                     variant="brand-outline"
-                    label="Show JSON"
-                    onclick={handleShowClick}>
+                    label={showBtnName}
+                    onclick={handleShowClick}
+                    style="width: 150px">
             </lightning-button>
         </div>
+
+        <template if:true={showJSONParagraph}>            
+            <lightning-card style="text-align: center; font-weight: bold">
+                <p>{jsonString}</p>
+            </lightning-card>
+        </template>
     </div>
-    <template if:true={showJSONParagraph}>
-        <div style="height: 700px; padding: 100px 0 0 20px">
-            <p>{jsonString}</p>
-        </div>
-    </template>
 </template>
