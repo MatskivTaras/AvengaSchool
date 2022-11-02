@@ -65,11 +65,28 @@ public class GroceryDAO {
         ];
     }
 
-    public static List<Product__c> getProducts(Integer limitNumber, Integer offsetNumber) {
-        return  [SELECT Id, Name FROM Product__c LIMIT :limitNumber OFFSET: offsetNumber];
+    public static List<Product__c> getProducts(Integer limitNumber, Integer offsetNumber, Boolean withAllFields) {
+        if (withAllFields) {
+            return  [SELECT Id, Name, Code__c, Available_Amount__c, Price__c FROM Product__c LIMIT :limitNumber OFFSET: offsetNumber];
+        } else {
+            return  [SELECT Id, Name FROM Product__c LIMIT :limitNumber OFFSET: offsetNumber];
+        }
     }
 
     public static List<Product__c> getProductAvailableInStore(Integer limitNumber, Integer offsetNumber) {
         return [SELECT Id, Name FROM Product__c WHERE Available_Amount__c > 0 LIMIT :limitNumber OFFSET: offsetNumber];    
+    }
+
+    public static String getProductsJSON(Integer limitNumber, Integer offsetNumber) {
+        List<Product__c> products = [
+            SELECT Id, Name, Code__c, Available_Amount__c, Price__c
+            FROM Product__c
+            LIMIT :limitNumber
+            OFFSET :offsetNumber
+        ];
+        
+        String productsJSON = JSON.serialize(products);
+
+        return productsJSON;
     }
 }
