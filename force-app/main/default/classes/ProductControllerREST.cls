@@ -1,9 +1,8 @@
-@RestResource(urlMapping='/Product__c/*')
+@RestResource(urlMapping='/FiveProductsWithHighestPrice/*')
 global class ProductControllerREST {
 
     @HttpGet
     global static List<Product__c> getProductsWithHighestPrice() {
-        //Integer
         return [
             SELECT Name, Price__c
             FROM Product__c

@@ -123,4 +123,24 @@ public class GroceryServices {
             update products;
         }
     }
+
+    public static String generateRecordName(String objectName, String productName) {
+        if (objectName == 'Line_Item__c') {
+            return 'selling ' + productName;
+
+        } else if (objectName == 'Transaction__c') {
+            DateTime createdDate = DateTime.now();
+            return
+                String.valueOf(createdDate.year()) +
+                String.valueOf(createdDate.month()) +
+                String.valueOf(createdDate.day()) +
+                String.valueOf(createdDate.hour()) +
+                String.valueOf(createdDate.minute()) +
+                String.valueOf(createdDate.second()) +
+                String.valueOf(createdDate.millisecond());
+
+        } else {
+            return '';
+        }
+    }
 }

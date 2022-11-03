@@ -2,7 +2,7 @@ public class TransactionTriggerHandler {
 
     public static void onBeforeInsert(List<Transaction__c> transactions) {
         for (Transaction__c transactionItem : transactions) {
-            transactionItem.Name = generateName();
+            transactionItem.Name = GroceryServices.generateRecordName('Transaction__c', '');
         }
     }
 
@@ -37,17 +37,5 @@ public class TransactionTriggerHandler {
         }
 
         update(productsForUpdate);
-    }
-
-    private static String generateName() {
-        DateTime createdDate = DateTime.now();
-        return
-            String.valueOf(createdDate.year()) +
-            String.valueOf(createdDate.month()) +
-            String.valueOf(createdDate.day()) +
-            String.valueOf(createdDate.hour()) +
-            String.valueOf(createdDate.minute()) +
-            String.valueOf(createdDate.second()) +
-            String.valueOf(createdDate.millisecond());
     }
 }
