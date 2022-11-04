@@ -110,8 +110,8 @@ public class GroceryServices {
                 totalQuantity += lineItem.Quantity__c;
             }
 
-            if (totalQuantity > 100) {
-                product.Available_Amount__c += 10;
+            if (totalQuantity > 1000) {
+                product.Available_Amount__c += 250;
 
                 if (!hasChanges) {
                     hasChanges = true;

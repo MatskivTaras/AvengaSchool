@@ -1,13 +1,12 @@
-@RestResource(urlMapping='/FiveProductsWithHighestPrice/*')
+@RestResource(urlMapping='/TopTenSellersInYear/*')
 global class ProductControllerREST {
 
     @HttpGet
-    global static List<Product__c> getProductsWithHighestPrice() {
-        return [
-            SELECT Name, Price__c
-            FROM Product__c
-            ORDER BY Price__c DESC
-            LIMIT 5
-        ];
+    global static List<Product__c> getTopTenSellers() {
+        Integer currentYear = System.Today().year();
+
+        List<Product__c> topSellers = GroceryDAO.getTopSellers(10, 0, currentYear);
+
+        return topSellers;
     }
 }
